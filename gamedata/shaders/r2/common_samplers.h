@@ -1,11 +1,17 @@
 #ifndef        COMMON_SAMPLERS_H
 #define        COMMON_SAMPLERS_H
 
-uniform sampler2D s_jitter_0;	// noise texture, 64x64
-uniform sampler2D s_jitter_1;	// noise texture, 64x64
-uniform sampler2D s_jitter_5;	// HD noise texture, screen resolution
-uniform sampler2D s_sun_shafts; // current sunshafts texture
-uniform sampler2D s_blur;		//simple blur
+//////////////////////////////////////////////////////////////////////////////////////////
+// Jittering   
+uniform sampler2D		s_jitter_0;	// noise texture, 64x64
+uniform sampler2D		s_jitter_1;	// noise texture, 64x64
+uniform sampler2D		s_jitter_5;	// HD noise texture, screen resolution
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Others   
+uniform sampler2D		s_sun_shafts;//mask blurring
+
+uniform sampler2D		s_blur;		//gaussian blur
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Geometry phase / deferring               	//
@@ -17,6 +23,7 @@ uniform sampler2D       s_hemi;             	// lmap_#2 texture
 
 // Terrain samplers
 uniform sampler2D       s_mask;                	// terrain mask
+uniform sampler2D       s_mask_puddles;			// puddles mask
 
 uniform sampler2D       s_dt_r;                	//
 uniform sampler2D       s_dt_g;                	//
@@ -34,6 +41,7 @@ uniform sampler2D       s_position;             // position G-buffer texture
 uniform sampler2D       s_normal;               // normal G-buffer texture
 uniform sampler2D       s_lmap;             	// 2D/cube projector lightmap
 uniform sampler3D       s_material;             // lighting coeffs lookup texture
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // Combine phase                                //
 uniform sampler2D       s_diffuse;              // albedo G-buffer texture
