@@ -1,0 +1,31 @@
+#ifndef OGSE_SUNSHAFTS_PS
+#define OGSE_SUNSHAFTS_PS
+#include "common.h"
+uniform float4 c_sunshafts;		// x - exposure, y - density
+
+float4 main(combine I):COLOR0
+{
+	// dist to the sun
+	float sun_dist = FARPLANE / (sqrt(1 - L_sun_dir_w.y * L_sun_dir_w.y));
+	// sun pos
+	float3 sun_pos_world = sun_dist*L_sun_dir_w + eye_position;
+	float4 sun_pos_projected = mul(m_VP, float4(sun_pos_world, 1));
+	float4 sun_pos_screen = proj_to_screen(sun_pos_projected)/sun_pos_projected.w;
+	// sun-pixel vector
+	float2 sun_vec_screen = normalize(sun_pos_screen.xy - I.tc0.xy)/* * 4*/;
+	// smooth shafts
+	float4 cSunShafts = tex2D(s_sun_shafts, I.tc0.xy);
+
+	#ifdef SUNSHAFTS_QUALITY
+		#if SUNSHAFTS_QUALITY>1
+			cSunShafts *= 0.5;
+			cSunShafts += tex2D(s_sun_shafts, I.tc0.xy + sun_vec_screen.yx * ogse_c_resolution.zw)*0.25;
+			cSunShafts += tex2D(s_sun_shafts, I.tc0.xy - sun_vec_screen.yx * ogse_c_resolution.zw)*0.25;
+		#endif
+	#endif
+	float3 img = tex2D(s_image, I.tc0.xy).xyz;
+	
+	float3 Color =  img + cSunShafts.xyz* L_sun_color.xyz * ( 1 - img ) * SS_INTENSITY * c_sunshafts.x;
+	return float4(Color.x, Color.y, Color.z, 1.0);
+}
+#endif
