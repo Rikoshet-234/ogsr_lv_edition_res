@@ -57,6 +57,13 @@
 	#define MBLUR_SEUS_NOISE_INT (0.75)
 
 /////////////////////////////////////////////////////////////
+// Raindrops
+	#define DROPS_TURBSIZE 15.f
+	#define DROPS_TURBSHIFT float4(0.35, 1, 0, 1)
+	#define DROPS_TURBTIME sin(0.1/3.f)
+	#define DROPS_TURBCOF 0.33
+	
+/////////////////////////////////////////////////////////////
 // depth of field
 
 	//common
