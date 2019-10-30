@@ -1,0 +1,22 @@
+#include "common.h"
+#include "ogse_config.h"
+uniform float4 blur_params;		// x - weigth of center pixel, y - num of pixel in blur radius, z - texcoords delta on one sample, w - weight gradient 
+uniform sampler2D s_blur_temp;
+
+float4 main (p_screen _in):COLOR0
+{
+
+	const int   support = int(GAUSS_SIGMA * 1.5);
+	
+    float2 dir   = float2( 1.0 / ogse_c_resolution.x, 0.0 ); // horiz=(1.0, 0.0), vert=(0.0, 1.0)
+	float4 acc   = ( 0.0 );     
+	float norm = 0.0;
+	for (int i = -support; i <= support; i++) 
+	{
+		float coeff = exp(-0.5 * float(i) * float(i) / (GAUSS_SIGMA * GAUSS_SIGMA));
+		acc += (tex2D(s_blur_temp, _in.tc0 + float(i) * dir)) * coeff;
+		norm += coeff;
+	}
+	acc *= 1.0/norm;
+    return acc;
+}
