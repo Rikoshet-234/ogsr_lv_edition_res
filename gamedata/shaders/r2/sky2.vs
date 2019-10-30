@@ -19,8 +19,10 @@ struct vf
 vf main (vi v)
 {
         vf                 	o;
-
-        o.hpos              = mul       (m_WVP, v.p);							// xform, input in world coords
+   
+		float4 tpos = float4(4000*v.p.x, 4000*v.p.y, 4000*v.p.z, 4000*v.p.w);
+        o.hpos              = mul       (m_WVP, tpos);						// xform, input in world coords, 1000 - magic number
+		o.hpos.z	    = o.hpos.w;
         o.tc0               = v.tc0;                        					// copy tc
         o.tc1               = v.tc1;                        					// copy tc
 #ifdef USE_VTF
