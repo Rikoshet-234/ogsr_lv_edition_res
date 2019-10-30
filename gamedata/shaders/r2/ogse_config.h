@@ -1,7 +1,6 @@
 #ifndef OGSE_CONFIG_H
 #define OGSE_CONFIG_H
 
-#include "configurator_defines.h"
 // эффекты со включением через консоль
 // Саншафты								r2_sunshafts [qt_off/qt_low/qt_medium/qt_high/qt_extreme]
 // Объемные саншафты					r2_sunshafts_mode volumetric
@@ -68,6 +67,11 @@
 	#define RIPPLES_DISTORTION 0.095f
 	#define RIPPLES_FREQUENCY 0.4f
 	#define RIPPLES_MAX_RADIUS 2	
+
+/////////////////////////////////////////////////////////////
+// Hashed alpha test
+	#define H_AREF //enables hashed alpha test 
+	#define H_AREF_SCALE float(0.5) //scale
 	
 /////////////////////////////////////////////////////////////
 // depth of field
