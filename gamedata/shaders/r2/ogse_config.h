@@ -30,14 +30,14 @@
 	#define SS_DUST_INTENSITY float(2.0)	// яркость пылинок
 	#define SS_DUST_DENSITY float(1.0)		// плотность частиц пыли 
 	#define SS_DUST_SIZE float(0.7)			// размер пылинок
+	#define SS_DUST
 
 /////////////////////////////////////////////////////////////
-// Screen-Space Directional Occlusion
-	#define SSDO_RADIUS float(0.04)				// радиус семплирования в игровых метрах. Чем выше, тем более заметен эффект, но тем больше нежелательных наложений теней
-	#define SSDO_GRASS_TUNING float(1.0)		// коррекция затенения травы. Чем больше, тем меньше затеняется.
-	#define SSDO_DISCARD_THRESHOLD float(1.0)	// максимальная разница в глубине пикселей, при которой пиксель еще учитывается в расчете затенения. Уменьшение убирает "шлейф" в некоторых случаях.
-	#define SSDO_COLOR_BLEEDING float(15.0)		// сила цвета семплов. Дает более цветные тени, но уменьшает интенсивность эффекта в целом. Для компенсации увеличивайте SSDO_BLEND_FACTOR.
-	
+// volumetric light
+	#define USE_VOLUMETRIC_DUST
+	#define SS_VOL_MAX_INTENSITY float(0.170)
+	#define VOL_LIGHT_MAX_INTENSITY float(0.015)
+
 /////////////////////////////////////////////////////////////
 // Horizon-Based Ambient Occlusion	
 	#define HBAO_NUM_STEPS int(3)			// Добавочное количество шагов при поиске горизонта. Улучшает качество, ухудшает производительность
@@ -46,7 +46,8 @@
 	#define HBAO_ANGLE_BIAS float(0.5)		// Угол в радианах для компенсации самозатенения плохо тесселированной геометрии. Увеличивать, если на  ребрах полигонов заметны тени.
 	#define HBAO_THRESHOLD float(0.3)		// Порог срабатывания эффекта. Чем меньше, тем более мелкие детали затеняются.
 	#define HBAO_GRASS_TUNING float(2.0)	// коррекция затенения травы. Чем больше, тем меньше затеняется.
-
+	#define HBAO_BLEND_FACTOR float(0.700)
+	
 /////////////////////////////////////////////////////////////
 // improved parallax occlusion mapping
 	#define POM_PARALLAX_OFFSET float(0.02)			// смещение. Чем больше, тем дальше будут выступать кирпичи.
@@ -76,24 +77,11 @@
 	#define ZDOF_MINDIST float(250)	        // минимальная дистанция от центра экрана, в пикселях. Ближе к фокусу блюра нет
 	#define ZDOF_MAXDIST float(500)			// максимальная дистанция от центра экрана, в пикселях. Дальше - равномерный блюр.
 	#define ZDOF_OFFSET float(2)			// предел глубины пикселя, меньшие значения не учитываютя при расчете среднего фокуса.
+	#define ZDOF_INTENSITY float(0.600)
 // reload depth of field
 	#define RDOF_DIST float (1)				// расстояние, на котором начинается блюр. Выставлять так, чтобы не блюрилось оружие (0,7-1,2)
 	#define RDOF_SPEED float (5)			// скорость нарастания эффекта. Хорошие значения - 5-1
-
-/////////////////////////////////////////////////////////////
-//vignette
-	#define VIGNETTE_OUT float(0.000) //
-	#define VIGNETTE_IN float(1.000) //radius of unaffected screen
-/////////////////////////////////////////////////////////////
-// improved blur
-	#define IMBLUR_START_DIST float(1.0)		// Начальная дистанция блюра
-	#define IMBLUR_FINAL_DIST float(300)		// Конечная дистанция блюра
-	#define IMBLUR_SAMPLES int(20)				// Количество семплов. Улучшает качество, ухудшает производительность
-	#define IMBLUR_CLAMP float(0.01)			// Отсечка скорости поворота
-	#define IMBLUR_SCALE_X float(-0.03)			// Граница скорости поворота по X
-	#define IMBLUR_SCALE_Y float(0.03)			// Граница скорости поворота по Y
-	#define IMBLUR_VEL_START float(0.001)		// Начальная скорость - включение эффекта
-	#define IMBLUR_VEL_FIN float(0.02)			// Конечная скорость - выключение эффекта	
+	#define RDOF_INTENSITY float(0.050)
 	
 /////////////////////////////////////////////////////////////
 // тепловизор
@@ -125,15 +113,20 @@
 	#define SW_PUDDLES_REFL_INTENSITY float(3.0)	// интенсивность "честных" отражений в лужах
 	#define MOON_ROAD_INTENSITY float(1.5)			// интенсивность "лунной дорожки"
 	#define WATER_GLOSS float(0.5)					// интенсивность спекуляра на воде
-
+	#define PUDDLES_GROW_SPEED float(0.200)
+	#define USE_MOON_ROAD	
+	
 /////////////////////////////////////////////////////////////
 // Флары от ламп
 	#define FL_POWER float(1.0)					// общая интенсивность фларов
 	#define FL_GLOW_RADIUS float(0.2)			// радиус короны источника света
 	#define FL_DIRT_INTENSITY float(1.0)		// интенсивность эффекта Lens Dirt
+	#define FL_USE_LONG_FLARE	
 	
 	#define MODEL_SELFLIGHT_POWER float(6.0)	// яркость свечения моделей
-
+	#define MODEL_LOW_SELFLIGHT_POWER 2.f
+	#define MODEL_RED_SELFLIGHT_POWER 2.f
+	
 /////////////////////////////////////////////////////////////
 // Эффекты, связанные с дождем
 
@@ -203,23 +196,4 @@
 #define ECB_LL_DIST 1.2f                            // дальность освещения ламп и костров
 #define ECB_LL_BRIGHTNESS 1.5f                      // яркость освещения ламп и костров
 
-/////////////////////////////////////////////////////////////
-// FXAA
-	#define FXAA_QUALITY__SUBPIX float(0.5)			// Choose the amount of sub-pixel aliasing removal.
-													// This can effect sharpness.
-													//   1.00 - upper limit (softer)
-													//   0.75 - default amount of filtering
-													//   0.50 - lower limit (sharper, less sub-pixel aliasing removal)
-													//   0.25 - almost off
-													//   0.00 - completely off
-	#define FXAA_QUALITY__EDGE_THRESHOLD float(0.063)    // The minimum amount of local contrast required to apply algorithm.
-													//   0.333 - too little (faster)
-													//   0.250 - low quality
-													//   0.166 - default
-													//   0.125 - high quality 
-													//   0.063 - overkill (slower)
-	#define FXAA_QUALITY__EDGE_THRESHOLD_MIN float(0.0312)    // Trims the algorithm from processing darks.
-													//   0.0833 - upper limit (default, the start of visible unfiltered edges)
-													//   0.0625 - high quality (faster)
-													//   0.0312 - visible limit (slower)
 #endif
