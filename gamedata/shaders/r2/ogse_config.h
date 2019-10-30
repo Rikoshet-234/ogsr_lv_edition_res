@@ -62,6 +62,12 @@
 	#define DROPS_TURBSHIFT float4(0.35, 1, 0, 1)
 	#define DROPS_TURBTIME sin(0.1/3.f)
 	#define DROPS_TURBCOF 0.33
+
+/////////////////////////////////////////////////////////////
+// Ripples
+	#define RIPPLES_DISTORTION 0.095f
+	#define RIPPLES_FREQUENCY 0.4f
+	#define RIPPLES_MAX_RADIUS 2	
 	
 /////////////////////////////////////////////////////////////
 // depth of field
