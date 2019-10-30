@@ -27,7 +27,7 @@
 	float4	mask= tex2D		(s_mask, I.tcdh);
 	float 	mag	= dot 		(mask,1);
 			mask= mask/mag;
-
+	float puddles = tex2D(s_mask_puddles,I.tcdh * dt_params).r * mask.g;
 #ifdef USE_WET_SURFACES
 
    	float wet_time = ogse_c_rain.z;
@@ -39,12 +39,10 @@
 
 	G    *= lerp(1.0, RAIN_MAX_SPECULAR_SCALING, wet_time);
 
-/*	D    *= RAIN_MAX_DIFFUSE_SCALING;
-	G    *= RAIN_MAX_SPECULAR_SCALING;*/
 
 //	refl_intensity = mask.g*RAIN_MAX_REFLECTION_POWER;
 
-    refl_intensity = wet_time*mask.g*lerp(0.0, RAIN_MAX_REFLECTION_POWER/* + (1.f - RAIN_MAX_REFLECTION_POWER)*AccumulatedWater*/, wet_time);		// asphalt only
+    refl_intensity = wet_time*puddles*lerp(0.0, RAIN_MAX_REFLECTION_POWER, wet_time);
       
 #endif
 
