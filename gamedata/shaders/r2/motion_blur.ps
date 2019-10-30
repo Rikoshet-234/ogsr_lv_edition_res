@@ -1,0 +1,36 @@
+#include "ogse_config.h"
+#include "common.h"
+
+uniform sampler2D s_current;
+uniform sampler2D s_previous;
+
+float4 main(combine _in):COLOR0	
+{
+	float3 P = get_xyz_position(_in.tc0).xyz;
+	float3 I = tex2D(s_current, _in.tc0).xyz;
+	float4 	pos4		= float4	(P,1.h);
+
+	float4 	p_current	= mul	(m_current,	pos4);
+	float4 	p_previous 	= mul	(m_previous,	pos4);
+	float2 	p_velocity 	= (m_blur *10)* ( (p_current.xy/p_current.w)-(p_previous.xy/p_previous.w) );
+			p_velocity	= clamp	(p_velocity,-MBLUR_CLAMP,+MBLUR_CLAMP);
+		
+    I = 0.0;
+
+    float dither = saturate(frac(sin(dot(_in.tc0, float2(12.9898, 78.223) * 1.0)) * 43758.5453)) * MBLUR_SEUS_NOISE_INT;
+
+    int samples = 0.0f;
+
+    for (int i = -2; i <= 2; ++i)
+    {
+        float2 coord = _in.tc0 + p_velocity * (float(i + dither) / 2.0);
+
+        if (coord.x > 0.0f && coord.x < 1.0f && coord.y > 0.0f && coord.y < 1.0f)
+        {
+            I += tex2D(s_current, coord).rgb;
+            samples += 1;
+        }
+    }
+    I /= samples;
+	return float4(I, 1.0);
+}
