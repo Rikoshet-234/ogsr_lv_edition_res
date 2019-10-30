@@ -74,7 +74,7 @@ void update_texcoords(inout p_bumped I)
 		float2	vTexCoord = I.tcdh + vParallaxOffset;
 	
 		//	Output the result
-		I.tcdh = vTexCoord;
+		I.tcdh.xy = vTexCoord.xy;
 #if defined(USE_TDETAIL)
 		I.tcdbump = vTexCoord * dt_params;
 #endif
@@ -88,7 +88,7 @@ void update_texcoords(inout p_bumped I)
 								 I.M1.z, I.M2.z, I.M3.z), -I.position.xyz);
 		float height	= tex2D(s_bumpX, I.tcdh).w;                                //
 		height = height*(parallax.x) + (parallax.y);                        //
-		float2 new_tc = I.tcdh + height * normalize(eye);                //
+		float2 new_tc = I.tcdh.xy + height * normalize(eye);                //
 		I.tcdh.xy = new_tc;
 	}
 #else
