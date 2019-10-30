@@ -58,6 +58,17 @@ float3         calc_reflection     (float3 pos_w, float3 norm_w)
 float3        calc_sun_r1                (float3 norm_w)    { return L_sun_color*saturate(dot((norm_w),-L_sun_dir_w));                 }
 float3        calc_model_hemi_r1         (float3 norm_w)    { return max(0,norm_w.y)*L_hemi_color;                                         }
 float3        calc_model_lq_lighting     (float3 norm_w)    { return L_material.x*calc_model_hemi_r1(norm_w) + L_ambient + L_material.y*calc_sun_r1(norm_w);         }
+float3 calc_fog(float3 pos, float3 color, float2 tc, sampler2D s_sky)
+{
+
+	float         	dist			= length		(pos);
+	float         	fog				= saturate		(dist*fog_params.w + fog_params.x); //
+	float3			final			= lerp     		(color,fog_color.xyz,fog);        			//
+	float        	skyblend		= saturate		(fog*fog);
+	float3			sky				= tex2D			(s_sky,tc).xyz;
+					final			= lerp     		(final,sky,skyblend);        			//
+	return			final;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 struct         v_static                {

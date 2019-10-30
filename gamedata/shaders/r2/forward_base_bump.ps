@@ -7,17 +7,6 @@
 
 uniform sampler2D	s_sky:register(ps,s2);	// texture with skycube
 
-float3 calc_fog(float3 pos, float3 color, float2 tc)
-{
-
-	float         	dist			= length		(pos);
-	float         	fog				= saturate		(dist*fog_params.w + fog_params.x); //
-	float3			final			= lerp     		(color,fog_color.xyz,fog);        			//
-	float        	skyblend		= saturate		(fog*fog);
-	float3			sky				= tex2D			(s_sky,tc).xyz;
-					final			= lerp     		(final,sky,skyblend);        			//
-	return			final;
-}
 float4 	main	( p_bumped I )	: COLOR
 {
 	// ------bump
@@ -77,7 +66,7 @@ float4 	main	( p_bumped I )	: COLOR
 	final += (ret.www + hspecular)*S.gloss;
 
 	// fog
-	final.xyz = calc_fog(_P,final,I.tcdh);
+	final.xyz = calc_fog(_P,final,I.tcdh, s_sky);
 
 	// that's all folks!
 	return float4(final, S.base.a);

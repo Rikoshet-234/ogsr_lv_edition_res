@@ -24,18 +24,6 @@ uniform sampler2D	s_nmap;
 uniform sampler2D	s_leaves;
 uniform sampler2D	s_jitter;
 uniform sampler2D	s_sky:register(ps,s2);	// texture with skycube
-
-float3 calc_fog(float3 pos, float3 color, float2 tc)
-{
-
-	float         	dist			= length		(pos);
-	float         	fog				= saturate		(dist*fog_params.w + fog_params.x); //
-	float3			final			= lerp     		(color,fog_color.xyz,fog);        			//
-	float        	skyblend		= saturate		(fog*fog);
-	float3			sky				= tex2D			(s_sky,tc).xyz;
-					final			= lerp     		(final,sky,skyblend);        			//
-	return			final;
-}
 float3 calc_moon_road(float3 color, float3 vreflect, float2 tc, float depth, float Nz)
 {
 #ifdef USE_MOON_ROAD
@@ -169,7 +157,7 @@ float4 main (vf I) : COLOR
 #endif
 
 	// fog
-	final = calc_fog(P,final,I.tbase.xy);
+	final = calc_fog(P,final,I.tbase.xy, s_sky);
 
 	// finally!
     return  float4   (final, alpha);
