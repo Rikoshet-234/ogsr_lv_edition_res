@@ -1,5 +1,5 @@
 #include "common.h"
-#include "vignette.h"
+
 //////////////////////////////////////////////////////////
 uniform sampler2D s_distort;
 uniform sampler2D s_flares;
@@ -15,22 +15,23 @@ uniform float4 c_color_grading; // xyz - color, w - density
 float4 main(combine I):COLOR 
 {
 	float2 tc0 = I.tc0.xy;
-	float depth = get_depth(tc0);//tex2D(s_position,tc0).xyz;
+	float depth = get_depth(tc0);
 	
 	#ifdef USE_DISTORT
 		float4 distort = tex2D(s_distort, tc0);
 		float2 offset = (distort.xy-.5h)*def_distort;
 		float2 center = tc0+offset;
-		float depth_x = get_depth(center);//tex2D (s_position,center).z;
+		float depth_x = get_depth(center);
 		if ((depth_x+EPSDEPTH)<depth) center = tc0;
 	#else
 		float2 center = tc0;
 	#endif
 
 	float3 img = tex2D(s_image,center).xyz;
-	
 	float4 bloom = tex2D(s_bloom,center);
-
+	
+	img += bloom.xyz*bloom.a;
+	
 	#if defined(USE_LENS_FLARES) || defined(USE_LENS_DIRT)
 		float4 flares = tex2D(s_flares,center);
 		img += flares.xyz*flares.a;
@@ -59,15 +60,6 @@ float4 main(combine I):COLOR
 		float3 highcontrast=img.xyz*img.xyz;
 		img.xyz=lerp(img.xyz,highcontrast,CONTRAST_FILTER_COEF);
 	#endif
-	
-	#ifdef IMAGE_SHARPENING
-		float4 blur = tex2D(s_blur, center);
-		img = lerp(blur.xyz, img, 1.0 + IMAGE_SHARPENING);
-	#endif
 
-	#ifdef USE_VIGNETTE
-		img *= vignette(center);
-	#endif
-
-	return combine_bloom(img,bloom);
+	return float4(img,0.f);
 }

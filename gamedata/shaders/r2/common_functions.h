@@ -16,7 +16,7 @@ float Contrast(float Input, float ContrastPower)
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//Tonemapping and bloom combiner
+//Tonemapping
 //////////////////////////////////////////////////////////////////////////////////////////
 void tonemap(out float4 low, out float4 high, float3 rgb, float scale)
 {
@@ -28,12 +28,6 @@ void tonemap(out float4 low, out float4 high, float3 rgb, float scale)
     low = float4(((rgb * (1 + rgb / fWhiteIntensitySQR)) / (rgb + 1)).xyz,0.f);
     high = float4(rgb.xyz / def_hdr,0.f); // 8x dynamic range
 }
-half4 combine_bloom(half3  low, half4 high)	
-{
-        half4 result = half4(low + high.rgb*high.a, 1.h);
-		return result;
-}
-
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //Noise functions
