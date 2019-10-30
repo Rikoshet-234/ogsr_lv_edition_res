@@ -29,7 +29,7 @@
 //HDR 
 //////////////////////////////////////////////////////////////////////////////////////////	
 	#define def_hdr         float(8.h)						// hdr divider
-	#define def_skyhdr         float(8.h)						// hdr divider
+	#define def_sky_hdr      float(8.h)						// hdr divider
 	#define def_hdr_clip	float(0.75)        		//
 
 	#define	LUMINANCE_VECTOR	float3(0.3, 0.38, 0.22)  // luminance vector fo luminance estimating
