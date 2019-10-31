@@ -41,6 +41,7 @@
 	#define HBAO_THRESHOLD float(0.3)		// Порог срабатывания эффекта. Чем меньше, тем более мелкие детали затеняются.
 	#define HBAO_GRASS_TUNING float(2.0)	// коррекция затенения травы. Чем больше, тем меньше затеняется.
 	#define HBAO_BLEND_FACTOR float(0.700)
+	#define AO_BLUR_FACTOR int(4)
 	
 /////////////////////////////////////////////////////////////
 // improved parallax occlusion mapping

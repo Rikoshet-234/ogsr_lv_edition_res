@@ -1,0 +1,35 @@
+#include "common.h"
+#include "ogse_config.h"
+uniform sampler2D s_ssao;
+
+float4 gauss(sampler2D ss, float2 center, float factor)
+{   
+   float4 col = 0;
+
+   float dx = factor * .5f/ogse_c_resolution.x;
+   float dy = factor * .5f/ogse_c_resolution.y;      
+   col.rgb =   
+	(
+      1.f * tex2Dlod( ss, float4(center,0,0) ).rgb +
+      1.f * tex2Dlod( ss, float4(center + float2(dx, 0),0,0) ).rgb +
+	  1.f * tex2Dlod( ss, float4(center + float2(dy, 0),0,0) ).rgb +
+      1.f * tex2Dlod( ss, float4(center + float2(-dx, 0),0,0) ).rgb +
+      1.f * tex2Dlod( ss, float4(center + float2(-dx, -dy),0,0) ).rgb +
+      1.f * tex2Dlod( ss, float4(center + float2(dx, -dy),0,0) ).rgb
+	)/6.f;	
+	return col;
+}
+
+float4 main(p_screen _in):COLOR0
+{
+	half4 ssao_blurred = half4(0,0,0,0);
+	
+	for (int i = 1; i < AO_BLUR_FACTOR; i++)
+	{
+		ssao_blurred += gauss(s_ssao,_in.tc0.xy,i);
+	}
+	ssao_blurred/=AO_BLUR_FACTOR;
+	
+	return ssao_blurred;
+
+}
