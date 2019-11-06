@@ -1,0 +1,50 @@
+#include "common.h"
+#include "ogse_config.h"
+
+
+
+#define GOLDEN_ANGLE 2.39996323
+#define NUMBER 128.0
+#define ITERATIONS (GOLDEN_ANGLE * NUMBER)
+#define BOKEH_AMOUNT 256.0f
+#define BOKEH_RADIUS 0.25f
+//-------------------------------------------------------------------------------------------
+// This creates the 2D offset for the next point.
+// (r-1.0) is the equivalent to sqrt(0, 1, 2, 3...)
+float2 Sample21(in float theta, inout float r)
+{
+    r += 1.0 / r;
+	return (r-1.0) * float2(cos(theta), sin(theta));
+}
+
+
+//-------------------------------------------------------------------------------------------
+float3 Bokeh( float2 uv)
+{
+	float3 acc = (0.0,0.0,0.0);
+	float3 div = (0.0,0.0,0.0);
+    float2 pixel = (ogse_c_resolution.y/ogse_c_resolution.x) * BOKEH_RADIUS * .0025;
+	pixel *= (uv + pixel);
+    float r = 1.0;
+	for (float j = 0.0; j < ITERATIONS; j += GOLDEN_ANGLE)
+    {
+       	
+		float3 col = tex2D( s_image, uv + pixel * Sample21(j, r)).xyz;
+		float3 bokeh = 2.5 + pow(col, 6.0) * BOKEH_AMOUNT;
+		acc += col * bokeh;
+		div += bokeh;
+	}
+	return acc / div;
+}
+//////////////////////////////////////////////////////////////////////////////////////////
+// Pixel
+float4         main                        ( p_screen I )        : COLOR
+{
+        // hi-rgb.base-lum
+
+	// calculation of final color
+	float3 col = tex2D(s_image, I.tc0).rgb;
+	col = Bokeh(I.tc0);
+	return float4(col,0.f);
+
+}
